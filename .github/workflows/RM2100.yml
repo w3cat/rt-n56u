@@ -7,7 +7,7 @@ on:
     types: [started]
 
 env:
-  src_git: https://github.com/d3vil7/Padavan-KVR.git
+  src_git: https://github.com/w3cat/rt-n56u.git
   src_dir: /opt/padavan
   work_dir: /opt/padavan/trunk
   firmware_dir: /opt/firmware
@@ -37,7 +37,7 @@ jobs:
         cpio git python-docutils gettext automake autopoint texinfo build-essential help2man \
         pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev wget
         sudo timedatectl set-timezone "Asia/Shanghai"
-        curl -q -Ls ip.im/info
+        curl -A 'curl' -Ls ip.im/info
 
     - name: Clone source and Download toolchain
       if: (!cancelled())
@@ -49,7 +49,7 @@ jobs:
     - name: Import Custom configs
       if: (!cancelled())
       run: |
-        cp $config_file $work_dir/configs/templates/${{ matrix.device }}.config
+        cp -f $config_file $work_dir/configs/templates/${{ matrix.device }}.config
         mv $config_file $work_dir/.config
         mv $custom_script $work_dir/
         cd $work_dir
@@ -64,7 +64,7 @@ jobs:
         fakeroot ./build_firmware_modify ${{ matrix.device }} 0
         echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
         mkdir -p $firmware_dir
-        mv images/*.trx $firmware_dir
+        mv images/*.trx $firmware_dir/
 
     - name: Upload firmware directory
       uses: actions/upload-artifact@v4
